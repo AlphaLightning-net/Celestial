@@ -12,13 +12,24 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
     private Component title;
 
     @Override
-    public ScoreboardBase.Builder title(@NotNull Component title) {
+    public ScoreboardBase.Builder title(Component title) {
+        if (title == null) {
+            throw new IllegalArgumentException("The title cannot be null");
+        }
+        if (this.title != null) {
+            throw new IllegalArgumentException("The title is already set");
+        }
+
         this.title = title;
         return this;
     }
 
     @Override
-    public ScoreboardBase.Builder appendLine(@NotNull Component line) {
+    public ScoreboardBase.Builder appendLine(Component line) {
+        if (line == null) {
+            throw new IllegalArgumentException("The line cannot be null");
+        }
+
         lines.add(line);
         return this;
     }
@@ -30,13 +41,17 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
     }
 
     @Override
-    public ScoreboardBase.Builder appendLines(@NotNull Collection<Component> lines) {
+    public ScoreboardBase.Builder appendLines(Collection<Component> lines) {
+        if (lines.contains(null)) {
+            throw new IllegalArgumentException("A line cannot be null");
+        }
+
         this.lines.addAll(lines);
         return this;
     }
 
     @Override
-    public ScoreboardBase build() {
+    public @NotNull ScoreboardBase build() {
         return new SidebarScoreboard(title, lines);
     }
 }
