@@ -1,8 +1,12 @@
 package net.alphalightning.celestial;
 
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 final class SidebarScoreboard implements ScoreboardBase {
 
@@ -16,6 +20,16 @@ final class SidebarScoreboard implements ScoreboardBase {
 
     @Override
     public void display() {
+    }
+
+    @Override
+    public @NotNull Component title() {
+        return title;
+    }
+
+    @Override
+    public @UnmodifiableView @NotNull List<Component> lines() {
+        return Collections.unmodifiableList(lines);
     }
 
 }
