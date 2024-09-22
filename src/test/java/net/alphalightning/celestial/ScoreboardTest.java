@@ -50,7 +50,5 @@ class ScoreboardTest {
 
         var scoreboard = builder.title(null).build();
         assertNull(scoreboard.title()); // Since the scoreboard does need a title, a non-null validation might be useful to prevent further complications
-
-        //TODO: Add non-null validation for titles and lines
     }
 }

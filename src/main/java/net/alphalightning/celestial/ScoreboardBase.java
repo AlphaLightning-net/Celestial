@@ -14,17 +14,17 @@ public sealed interface ScoreboardBase extends Scoreboard permits SidebarScorebo
     sealed interface Builder extends Scoreboard.Builder<Builder> permits SidebarScoreboardBuilder, BelowNameScoreboardBuilder {
 
         @Override
-        Builder title(@NotNull Component title);
+        Builder title(Component title);
 
         @Override
-        Builder appendLine(@NotNull Component line);
+        Builder appendLine(Component line);
 
         @Override
         Builder appendEmptyLine();
 
         @Override
-        Builder appendLines(@NotNull Collection<Component> lines);
+        Builder appendLines(Collection<Component> lines);
 
-        ScoreboardBase build();
+        @NotNull ScoreboardBase build();
     }
 }

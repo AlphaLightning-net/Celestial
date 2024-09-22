@@ -15,19 +15,20 @@ public interface Scoreboard {
 
     @NotNull Component title();
 
-    @UnmodifiableView @NotNull List<Component> lines();
+    @UnmodifiableView
+    @NotNull List<Component> lines();
 
     interface Builder<T> {
-        T title(@NotNull Component title);
+        T title(Component title);
 
-        T appendLine(@NotNull Component line);
+        T appendLine(Component line);
 
         T appendEmptyLine();
 
-        T appendLines(@NotNull Collection<Component> lines);
+        T appendLines(Collection<Component> lines);
     }
 
-    static ScoreboardBase.Builder builder(@NotNull DisplayType type) {
+    static ScoreboardBase.Builder builder(DisplayType type) {
         if (type == DisplayType.SIDEBAR) {
             return new SidebarScoreboardBuilder();
         }
