@@ -21,6 +21,13 @@ repositories {
 
 dependencies {
     paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
+
+    // Dependencies that are already provided by another source
+    compileOnly("org.jetbrains:annotations:24.1.0")
+
+    // Dependencies required for testing
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 // Since we don't care about supporting older versions and spigot, we don't have to reobfuscate our code
