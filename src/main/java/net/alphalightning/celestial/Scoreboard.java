@@ -12,8 +12,6 @@ public interface Scoreboard {
     void destroy();
 
     interface Builder<T> {
-        T type(@NotNull DisplayType type);
-
         T title(@NotNull Component title);
 
         T appendLine(@NotNull Component line);

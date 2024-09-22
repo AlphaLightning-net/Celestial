@@ -8,11 +8,6 @@ import java.util.Collection;
 final class BelowNameScoreboardBuilder implements ScoreboardBase.Builder {
 
     @Override
-    public ScoreboardBase.Builder type(@NotNull DisplayType type) {
-        return this;
-    }
-
-    @Override
     public ScoreboardBase.Builder title(@NotNull Component title) {
         return this;
     }

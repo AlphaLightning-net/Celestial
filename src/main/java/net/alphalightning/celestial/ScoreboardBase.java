@@ -14,9 +14,6 @@ public sealed interface ScoreboardBase extends Scoreboard permits SidebarScorebo
     sealed interface Builder extends Scoreboard.Builder<Builder> permits SidebarScoreboardBuilder, BelowNameScoreboardBuilder {
 
         @Override
-        Builder type(@NotNull DisplayType type);
-
-        @Override
         Builder title(@NotNull Component title);
 
         @Override
