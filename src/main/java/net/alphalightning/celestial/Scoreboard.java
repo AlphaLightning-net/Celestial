@@ -20,4 +20,11 @@ public interface Scoreboard {
 
         T appendLines(@NotNull Collection<Component> lines);
     }
+
+    static ScoreboardBase.Builder builder(@NotNull DisplayType type) {
+        if (type == DisplayType.SIDEBAR) {
+            return new SidebarScoreboardBuilder();
+        }
+        return new BelowNameScoreboardBuilder();
+    }
 }
