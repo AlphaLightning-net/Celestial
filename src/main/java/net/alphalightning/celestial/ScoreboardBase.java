@@ -7,10 +7,6 @@ import java.util.Collection;
 
 public sealed interface ScoreboardBase extends Scoreboard permits SidebarScoreboard, BelowNameScoreboard {
 
-    @Override
-    default void destroy() {
-    }
-
     sealed interface Builder extends Scoreboard.Builder<Builder> permits SidebarScoreboardBuilder, BelowNameScoreboardBuilder {
 
         @Override
