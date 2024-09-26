@@ -64,7 +64,7 @@ tasks {
 }
 
 bukkitPluginYaml {
-    main = "$group.${rootProject.name}.CelestialPlugin"
+    main = "$group.${rootProject.name}.plugin.CelestialPlugin"
     load = BukkitPluginYaml.PluginLoadOrder.STARTUP
     authors = listOf("Merry")
     apiVersion = "1.21"
