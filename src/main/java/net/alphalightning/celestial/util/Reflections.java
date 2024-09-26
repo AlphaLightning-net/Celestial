@@ -17,17 +17,6 @@ public final class Reflections {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
-    public static Object value(Object obj, String fieldName) {
-        try {
-            var field = obj.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(obj);
-
-        } catch (NoSuchFieldException | IllegalAccessException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-
     public static Class<?> clazz(@NotNull String name) throws ClassNotFoundException {
         return Class.forName(name);
     }
