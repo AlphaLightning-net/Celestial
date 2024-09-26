@@ -8,8 +8,8 @@ public final class ComponentUtil {
     public static boolean compareEquals(Component first, Component second) {
         var miniMessage = MiniMessage.miniMessage();
 
-        var serializedFirst = miniMessage.serialize(first);
-        var serializedSecond = miniMessage.serialize(second);
+        var serializedFirst = miniMessage.serializeOr(first, "");
+        var serializedSecond = miniMessage.serializeOr(second, "");
 
         return serializedFirst.equals(serializedSecond);
     }
