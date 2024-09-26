@@ -11,6 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase, ComponentComparable {
 
+    private final LinkedList<Component> scores = new LinkedList<>();
     private final LinkedList<Component> lines;
     private final String name;
     private Component title;
@@ -117,7 +118,8 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
     @Override
     public @NotNull Optional<Component> score(int line) {
-        return Optional.empty();
+        validateLine(line, true, false);
+        return Optional.ofNullable(scores.get(line));
     }
 
     private void validateLine(int line, boolean checkInRange, boolean checkMax) {
