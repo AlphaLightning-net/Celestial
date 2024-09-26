@@ -1,4 +1,128 @@
 package net.alphalightning.celestial;
 
+import net.alphalightning.celestial.util.Reflections;
+import net.kyori.adventure.text.format.NamedTextColor;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static net.alphalightning.celestial.util.Reflections.*;
+import static net.alphalightning.celestial.util.Reflections.enumValue;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+
 public abstract class ReflectiveScoreboardBase {
+
+    private static final NamedTextColor[] COLORS = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
+    protected static final String[] LEGACY_COLOR_CODES = Arrays.stream(COLORS)
+            .map(NamedTextColor::toString)
+            .toArray(String[]::new);
+
+    private static final Map<Class<?>, Field[]> PACKETS = new HashMap<>(8);
+
+    private static final Class<?> CHAT_COMPONENT_CLAZZ; // Packets and their components
+    private static final Class<?> CHAT_FORMAT_ENUM;
+    private static final Object RESET_FORMATTING;
+    private static final MethodHandle PLAYER_CONNECTION;
+    private static final MethodHandle PLAYER_GET_HANDLE;
+    private static final MethodHandle SEND_PACKET;
+    private static final MethodHandle FIXED_NUMBER_FORMAT;
+
+    private static final Reflections.PacketConstructor PACKET_SCOREBOARD_OBJECTIVE; // Scoreboard packets
+    private static final Reflections.PacketConstructor PACKET_SCOREBOARD_DISPLAY_OBJECTIVE;
+    private static final Reflections.PacketConstructor PACKET_SCOREBOARD_TEAM;
+    private static final Reflections.PacketConstructor PACKET_SCOREBOARD_SERIALIZABLE_TEAM;
+    private static final MethodHandle PACKET_SCOREBOARD_SET_SCORE;
+    private static final MethodHandle PACKET_SCOREBOARD_RESET_SCORE;
+    private static final boolean SCORE_OPTIONAL_COMPONENTS;
+
+    private static final Class<?> DISPLAY_SLOT_TYPE; // Scoreboard enums
+    private static final Class<?> ENUM_SCOREBOARD_HEALTH_DISPLAY;
+    private static final Class<?> ENUM_SCOREBOARD_ACTION;
+    private static final Object BLANK_NUMBER_FORMAT;
+    private static final Object SIDEBAR_DISPLAY_SLOT;
+    private static final Object ENUM_SCOREBOARD_HEALTH_DISPLAY_INTEGER;
+    private static final Object ENUM_SCOREBOARD_ACTION_CHANGE;
+    private static final Object ENUM_SCOREBOARD_ACTION_REMOVE;
+
+    static {
+        try {
+            var lookup = MethodHandles.lookup();
+
+            var craftPlayerClazz = clazz("org.bukkit.craftbukkit.entity.CraftPlayer");
+            var entityPlayerClazz = clazz("net.minecraft.server.level.ServerPlayer");
+            var playerConnectionClazz = clazz("net.minecraft.server.network.ServerGamePacketListenerImpl");
+            var packetClazz = clazz("net.minecraft.network.protocol.Packet");
+            var packetScoreboardObjectiveClazz = clazz("net.minecraft.network.protocol.game.ClientboundSetObjectivePacket");
+            var packetScoreboardDisplayObjectiveClazz = clazz("net.minecraft.network.protocol.game.ClientboundSetDisplayObjectivePacket");
+            var packetScoreboardScoreClazz = clazz("net.minecraft.network.protocol.game.ClientboundSetScorePacket");
+            var packetScoreboardTeamClazz = clazz("net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket");
+            var scoreboardTeamClazz = innerClazz(packetScoreboardTeamClazz, inner -> !inner.isEnum());
+            var playerConnectionField = Arrays.stream(entityPlayerClazz.getFields())
+                    .filter(field -> field.getType().isAssignableFrom(playerConnectionClazz))
+                    .findFirst().orElseThrow(NoSuchFieldException::new);
+            var sendPacketMethod = Stream.concat(Arrays.stream(playerConnectionClazz.getSuperclass().getMethods()), Arrays.stream(playerConnectionClazz.getMethods()))
+                    .filter(method -> method.getParameterCount() == 1 && method.getParameterTypes()[0] == packetClazz)
+                    .findFirst().orElseThrow(NoSuchMethodException::new);
+            var displaySlotEnum = optionalClazz("net.minecraft.world.scores.DisplaySlot");
+
+            CHAT_COMPONENT_CLAZZ = clazz("net.minecraft.network.chat.Component");
+            CHAT_FORMAT_ENUM = clazz("net.minecraft.ChatFormatting");
+            DISPLAY_SLOT_TYPE = displaySlotEnum.orElse(int.class);
+            RESET_FORMATTING = enumValue(CHAT_FORMAT_ENUM, "RESET", 21);
+            SIDEBAR_DISPLAY_SLOT = displaySlotEnum.isPresent() ? enumValue(DISPLAY_SLOT_TYPE, "SIDEBAR", 1) : 1;
+            PLAYER_GET_HANDLE = lookup.findVirtual(craftPlayerClazz, "getHandle", MethodType.methodType(craftPlayerClazz));
+            PLAYER_CONNECTION = lookup.unreflectGetter(playerConnectionField);
+            SEND_PACKET = lookup.unreflect(sendPacketMethod);
+            PACKET_SCOREBOARD_OBJECTIVE = findPacketConstructor(packetScoreboardObjectiveClazz, lookup);
+            PACKET_SCOREBOARD_DISPLAY_OBJECTIVE = findPacketConstructor(packetScoreboardDisplayObjectiveClazz, lookup);
+
+            var numberFormat = optionalClazz("net.minecraft.network.chat.numbers.NumberFormat");
+            var blankFormatClazz = clazz("net.minecraft.network.chat.numbers.BlankFormat");
+            var fixedFormatClazz = clazz("net.minecraft.network.chat.numbers.FixedFormat");
+            var resetScoreClazz = clazz("net.minecraft.network.protocol.game.ClientboundResetScorePacket");
+            var scoreType = MethodType.methodType(void.class, String.class, String.class, int.class, CHAT_COMPONENT_CLAZZ, numberFormat.get());
+            var scoreTypeOptional = MethodType.methodType(void.class, String.class, String.class, int.class, Optional.class, Optional.class);
+            var removeScoreType = MethodType.methodType(void.class, String.class, String.class);
+            var fixedFormatType = MethodType.methodType(void.class, CHAT_COMPONENT_CLAZZ);
+            var blankField = Arrays.stream(blankFormatClazz.getFields()).filter(field -> field.getType() == blankFormatClazz).findAny();
+            var optionalScorePacket = optionalConstructor(packetScoreboardScoreClazz, lookup, scoreTypeOptional);
+
+            PACKET_SCOREBOARD_SET_SCORE = optionalScorePacket.isPresent() ? optionalScorePacket.get() : lookup.findConstructor(packetScoreboardScoreClazz, scoreType);
+            PACKET_SCOREBOARD_RESET_SCORE = lookup.findConstructor(resetScoreClazz, removeScoreType);
+            PACKET_SCOREBOARD_TEAM = findPacketConstructor(packetScoreboardTeamClazz, lookup);
+            PACKET_SCOREBOARD_SERIALIZABLE_TEAM = scoreboardTeamClazz == null ? null : findPacketConstructor(scoreboardTeamClazz, lookup);
+            FIXED_NUMBER_FORMAT = lookup.findConstructor(fixedFormatClazz, fixedFormatType);
+            BLANK_NUMBER_FORMAT = blankField.isPresent() ? blankField.get().get(null) : null;
+            SCORE_OPTIONAL_COMPONENTS = optionalScorePacket.isPresent();
+
+            for (var clazz : Arrays.asList(packetScoreboardObjectiveClazz, packetScoreboardDisplayObjectiveClazz, packetScoreboardScoreClazz, packetScoreboardTeamClazz, scoreboardTeamClazz)) {
+                if (clazz == null) continue;
+
+                var fields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).toArray(Field[]::new);
+                for (var field : fields) {
+                    field.setAccessible(true);
+                }
+                PACKETS.put(clazz, fields);
+            }
+
+            ENUM_SCOREBOARD_HEALTH_DISPLAY = clazz("net.minecraft.world.scores.criteria.ObjectiveCriteria$RenderType");
+            ENUM_SCOREBOARD_ACTION = clazz("net.minecraft.server.ServerScoreboard$Method");
+            ENUM_SCOREBOARD_HEALTH_DISPLAY_INTEGER = enumValue(ENUM_SCOREBOARD_HEALTH_DISPLAY, "INTEGER", 0);
+            ENUM_SCOREBOARD_ACTION_CHANGE = enumValue(ENUM_SCOREBOARD_ACTION, "CHANGE", 0);
+            ENUM_SCOREBOARD_ACTION_REMOVE = enumValue(ENUM_SCOREBOARD_ACTION, "REMOVE", 1);
+
+        } catch (Throwable throwable) {
+            throw new ExceptionInInitializerError(throwable);
+        }
+    }
+
 }
