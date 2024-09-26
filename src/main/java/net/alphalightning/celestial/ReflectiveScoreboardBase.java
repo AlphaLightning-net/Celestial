@@ -10,10 +10,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static net.alphalightning.celestial.util.Reflections.*;
@@ -141,6 +138,10 @@ public abstract class ReflectiveScoreboardBase {
         this.player = player;
     }
 
+    protected Component lineByScore(List<Component> lines, int score) {
+        return score < lines.size() ? lines.get(lines.size() - score - 1) : null;
+    }
+
     protected void sendObjectivePacket(Lifecycle.Objective lifecycle, String uniqueName, Component title) throws Throwable {
         var packet = PACKET_SCOREBOARD_OBJECTIVE.invoke();
         set(packet, String.class, uniqueName);
@@ -160,7 +161,62 @@ public abstract class ReflectiveScoreboardBase {
         set(packet, String.class, uniqueName); // Score name
 
         sendPacket(packet);
+    }
 
+    protected void sendScorePacket(String uniqueName, List<Component> scores, int score, Lifecycle.Scoreboard lifecycle) throws Throwable {
+        var objectName = LEGACY_COLOR_CODES[score];
+        var enumAction = lifecycle == Lifecycle.Scoreboard.REMOVE ? ENUM_SCOREBOARD_ACTION_REMOVE : ENUM_SCOREBOARD_ACTION_CHANGE;
+
+        if (PACKET_SCOREBOARD_RESET_SCORE == null) {
+            sendPacket(PACKET_SCOREBOARD_SET_SCORE.invoke(enumAction, uniqueName, objectName, score));
+            return;
+        }
+
+        if (lifecycle == Lifecycle.Scoreboard.REMOVE) {
+            sendPacket(PACKET_SCOREBOARD_RESET_SCORE.invoke(objectName, uniqueName));
+            return;
+        }
+
+        var scoreFormat = lineByScore(scores, score);
+        var format = scoreFormat != null
+                ? FIXED_NUMBER_FORMAT.invoke(asMinecraftComponent(scoreFormat))
+                : BLANK_NUMBER_FORMAT;
+        var packet = SCORE_OPTIONAL_COMPONENTS
+                ? PACKET_SCOREBOARD_SET_SCORE.invoke(objectName, uniqueName, score, Optional.empty(), Optional.of(format))
+                : PACKET_SCOREBOARD_SET_SCORE.invoke(objectName, uniqueName, score, null, format);
+
+        sendPacket(packet);
+    }
+
+    protected void sendTeamPacket(String uniqueName, int score, Lifecycle.Team lifecycle, Component prefix, Component suffix) throws Throwable {
+        if (lifecycle == Lifecycle.Team.ADD_PLAYERS || lifecycle == Lifecycle.Team.REMOVE_PLAYERS) throw new UnsupportedOperationException();
+
+        var packet = PACKET_SCOREBOARD_TEAM.invoke();
+        set(packet, String.class, uniqueName + ":" + score); // Team name
+        set(packet, int.class, lifecycle.ordinal(), 0); // Update lifecycle
+
+        if (lifecycle == Lifecycle.Team.REMOVE) {
+            sendPacket(packet);
+            return;
+        }
+
+        var team = PACKET_SCOREBOARD_SERIALIZABLE_TEAM.invoke();
+        setComponent(team, null, 0); // Display name
+        set(team, CHAT_FORMAT_ENUM, RESET_FORMATTING); // Color
+        setComponent(team, prefix, 1); // Prefix
+        setComponent(team, suffix, 2); // Suffix
+        set(team, String.class, "always", 0); // Visibility
+        set(team, String.class, "always", 1); // Collisions
+        set(packet, Optional.class, Optional.of(team));
+
+        if (lifecycle == Lifecycle.Team.CREATE) {
+            set(packet, Collection.class, Collections.singletonList(LEGACY_COLOR_CODES[score])); // Players on that team
+        }
+        sendPacket(packet);
+    }
+
+    protected void sendTeamPacket(String uniqueName, int score, Lifecycle.Team lifecycle) throws Throwable {
+        sendTeamPacket(uniqueName, score, lifecycle, null, null);
     }
 
     private void sendPacket(Object packet) throws Throwable {
