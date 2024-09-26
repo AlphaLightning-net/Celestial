@@ -7,7 +7,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
-final class BelowNameScoreboard implements ScoreboardBase {
+final class BelowNameScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase {
 
     private final Component title;
     private final LinkedList<Component> lines;

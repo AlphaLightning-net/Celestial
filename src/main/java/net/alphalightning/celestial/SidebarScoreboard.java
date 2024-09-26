@@ -7,7 +7,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
-final class SidebarScoreboard implements ScoreboardBase {
+final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase {
 
     private final Component title;
     private final LinkedList<Component> lines;
