@@ -2,7 +2,7 @@ package net.alphalightning.celestial;
 
 import net.alphalightning.celestial.util.Reflections;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.lang.invoke.MethodHandle;
@@ -14,15 +14,13 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static net.alphalightning.celestial.util.Reflections.*;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public abstract class ReflectiveScoreboardBase {
 
-    private static final NamedTextColor[] COLORS = {BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE};
-    protected static final String[] LEGACY_COLOR_CODES = Arrays.stream(COLORS)
-            .map(NamedTextColor::toString)
+    @SuppressWarnings("deprecation")
+    protected static final String[] LEGACY_COLOR_CODES = Arrays.stream(ChatColor.values()) // Stupid legacy shit because the adventure color is rendered as a text
+            .map(Object::toString)
             .toArray(String[]::new);
-
     private static final Map<Class<?>, Field[]> PACKETS = new HashMap<>(8);
 
     private static final Class<?> CHAT_COMPONENT_CLAZZ; // Packets and their components
