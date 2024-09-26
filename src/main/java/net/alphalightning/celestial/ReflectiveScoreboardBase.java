@@ -1,6 +1,7 @@
 package net.alphalightning.celestial;
 
 import net.alphalightning.celestial.util.Reflections;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
@@ -52,6 +53,9 @@ public abstract class ReflectiveScoreboardBase {
     private static final Object ENUM_SCOREBOARD_ACTION_CHANGE;
     private static final Object ENUM_SCOREBOARD_ACTION_REMOVE;
 
+    private static final Object EMPTY_COMPONENT; // Paper specific
+    private static final MethodHandle COMPONENT_METHOD;
+
     private final Player player;
     private boolean deleted = false;
 
@@ -81,7 +85,7 @@ public abstract class ReflectiveScoreboardBase {
             DISPLAY_SLOT_TYPE = displaySlotEnum.orElse(int.class);
             RESET_FORMATTING = enumValue(CHAT_FORMAT_ENUM, "RESET", 21);
             SIDEBAR_DISPLAY_SLOT = displaySlotEnum.isPresent() ? enumValue(DISPLAY_SLOT_TYPE, "SIDEBAR", 1) : 1;
-            PLAYER_GET_HANDLE = lookup.findVirtual(craftPlayerClazz, "getHandle", MethodType.methodType(craftPlayerClazz));
+            PLAYER_GET_HANDLE = lookup.findVirtual(craftPlayerClazz, "getHandle", MethodType.methodType(entityPlayerClazz));
             PLAYER_CONNECTION = lookup.unreflectGetter(playerConnectionField);
             SEND_PACKET = lookup.unreflect(sendPacketMethod);
             PACKET_SCOREBOARD_OBJECTIVE = findPacketConstructor(packetScoreboardObjectiveClazz, lookup);
@@ -122,13 +126,77 @@ public abstract class ReflectiveScoreboardBase {
             ENUM_SCOREBOARD_ACTION_CHANGE = enumValue(ENUM_SCOREBOARD_ACTION, "CHANGE", 0);
             ENUM_SCOREBOARD_ACTION_REMOVE = enumValue(ENUM_SCOREBOARD_ACTION, "REMOVE", 1);
 
+            var paperAdventure = Class.forName("io.papermc.paper.adventure.PaperAdventure");
+            var method = paperAdventure.getDeclaredMethod("asVanilla", Component.class);
+
+            COMPONENT_METHOD = lookup.unreflect(method);
+            EMPTY_COMPONENT = COMPONENT_METHOD.invoke(Component.empty());
+
         } catch (Throwable throwable) {
             throw new ExceptionInInitializerError(throwable);
         }
     }
 
-    public ReflectiveScoreboardBase(Player player) {
+    protected ReflectiveScoreboardBase(Player player) {
         this.player = player;
+    }
+
+    protected void sendObjectivePacket(Lifecycle.Objective lifecycle, String uniqueName, Component title) throws Throwable {
+        var packet = PACKET_SCOREBOARD_OBJECTIVE.invoke();
+        set(packet, String.class, uniqueName);
+        set(packet, int.class, lifecycle.ordinal());
+
+        if (lifecycle != Lifecycle.Objective.REMOVE) {
+            setComponent(packet, title, 1);
+            set(packet, Optional.class, Optional.empty()); // Number format for 1.20.5+
+            set(packet, ENUM_SCOREBOARD_HEALTH_DISPLAY, ENUM_SCOREBOARD_HEALTH_DISPLAY_INTEGER);
+        }
+        sendPacket(packet);
+    }
+
+    protected void sendDisplayObjectivePacket(String uniqueName) throws Throwable {
+        var packet = PACKET_SCOREBOARD_DISPLAY_OBJECTIVE.invoke();
+        set(packet, DISPLAY_SLOT_TYPE, SIDEBAR_DISPLAY_SLOT); // Position - maybe has to be modified to support the below name scoreboard
+        set(packet, String.class, uniqueName); // Score name
+
+        sendPacket(packet);
+
+    }
+
+    private void sendPacket(Object packet) throws Throwable {
+        if (deleted) throw new IllegalStateException("Cannot send packet after the scoreboard is deleted");
+        if (!player.isOnline()) return;
+
+        var entityPlayer = PLAYER_GET_HANDLE.invoke(player);
+        var playerConnection = PLAYER_CONNECTION.invoke(entityPlayer);
+        SEND_PACKET.invoke(playerConnection, packet);
+    }
+
+    private void set(Object object, Class<?> fieldType, Object value) throws ReflectiveOperationException {
+        set(object, fieldType, value, 0);
+    }
+
+    private void set(Object packet, Class<?> fieldType, Object value, int count) throws ReflectiveOperationException {
+        var i = 0;
+        for (var field : PACKETS.get(packet.getClass())) {
+            if (field.getType() == fieldType && count == i++) {
+                field.set(packet, value);
+            }
+        }
+    }
+
+    private void setComponent(Object packet, Component value, int count) throws Throwable {
+        var i = 0;
+        for (var field : PACKETS.get(packet.getClass())) {
+            if ((field.getType() == String.class || field.getType() == CHAT_COMPONENT_CLAZZ) && count == i++) {
+                field.set(packet, asMinecraftComponent(value));
+            }
+        }
+    }
+
+    private Object asMinecraftComponent(Component component) throws Throwable {
+        if (component == null) return EMPTY_COMPONENT;
+        return COMPONENT_METHOD.invoke(component);
     }
 
 }
