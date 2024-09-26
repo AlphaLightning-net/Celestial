@@ -111,11 +111,24 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
     @Override
     public @Nullable Component line(int line) {
-        return null;
+        validateLine(line, true, false);
+        return lines.get(line);
     }
 
     @Override
     public @NotNull Optional<Component> score(int line) {
         return Optional.empty();
+    }
+
+    private void validateLine(int line, boolean checkInRange, boolean checkMax) {
+        if (line < 0) {
+            throw new IllegalArgumentException("Line cannot be negative");
+        }
+        if (checkInRange && line >= this.lines.size()) {
+            throw new IllegalArgumentException("Line cannot be greater than the number of lines (%s)".formatted(lines.size()));
+        }
+        if (checkMax && line >= LEGACY_COLOR_CODES.length - 1) {
+            throw new IllegalArgumentException("Line number is too high: " + line);
+        }
     }
 }
