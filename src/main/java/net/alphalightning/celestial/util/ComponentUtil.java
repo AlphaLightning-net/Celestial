@@ -1,11 +1,11 @@
-package net.alphalightning.celestial;
+package net.alphalightning.celestial.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-public interface ComponentComparable {
+public final class ComponentUtil {
 
-    default boolean compareEquals(Component first, Component second) {
+    public static boolean compareEquals(Component first, Component second) {
         var miniMessage = MiniMessage.miniMessage();
 
         var serializedFirst = miniMessage.serialize(first);
@@ -13,5 +13,4 @@ public interface ComponentComparable {
 
         return serializedFirst.equals(serializedSecond);
     }
-
 }

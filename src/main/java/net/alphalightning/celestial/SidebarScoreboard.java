@@ -1,5 +1,6 @@
 package net.alphalightning.celestial;
 
+import net.alphalightning.celestial.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase, ComponentComparable {
+final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase {
 
     private final LinkedList<Component> scores = new LinkedList<>();
     private final LinkedList<Component> lines;
@@ -49,7 +50,7 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
     @Override
     public void updateTitle(Component title) {
-        if (compareEquals(this.title, title)) return;
+        if (ComponentUtil.compareEquals(this.title, title)) return;
 
         this.title = title;
         try {
@@ -120,10 +121,10 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
             }
 
             for (var i = 0; i < linesSize; i++) {
-                if (!compareEquals(lineByScore(oldLines, i), lineByScore(this.scores, i))) {
+                if (!ComponentUtil.compareEquals(lineByScore(oldLines, i), lineByScore(this.scores, i))) {
                     sendLineChange(i);
                 }
-                if (!compareEquals(lineByScore(oldScores, i), lineByScore(this.scores, i))) {
+                if (!ComponentUtil.compareEquals(lineByScore(oldScores, i), lineByScore(this.scores, i))) {
                     sendScorePacket(name, this.scores, i, Lifecycle.Scoreboard.CHANGE);
                 }
             }
