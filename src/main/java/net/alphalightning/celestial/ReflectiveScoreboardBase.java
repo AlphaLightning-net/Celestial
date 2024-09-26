@@ -2,6 +2,7 @@ package net.alphalightning.celestial;
 
 import net.alphalightning.celestial.util.Reflections;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.entity.Player;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -15,9 +16,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static net.alphalightning.celestial.util.Reflections.*;
-import static net.alphalightning.celestial.util.Reflections.enumValue;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 public abstract class ReflectiveScoreboardBase {
 
@@ -52,6 +51,9 @@ public abstract class ReflectiveScoreboardBase {
     private static final Object ENUM_SCOREBOARD_HEALTH_DISPLAY_INTEGER;
     private static final Object ENUM_SCOREBOARD_ACTION_CHANGE;
     private static final Object ENUM_SCOREBOARD_ACTION_REMOVE;
+
+    private final Player player;
+    private boolean deleted = false;
 
     static {
         try {
@@ -123,6 +125,10 @@ public abstract class ReflectiveScoreboardBase {
         } catch (Throwable throwable) {
             throw new ExceptionInInitializerError(throwable);
         }
+    }
+
+    public ReflectiveScoreboardBase(Player player) {
+        this.player = player;
     }
 
 }

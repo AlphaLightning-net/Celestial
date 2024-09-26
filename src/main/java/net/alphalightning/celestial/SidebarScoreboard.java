@@ -1,6 +1,7 @@
 package net.alphalightning.celestial;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -12,7 +13,8 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
     private final Component title;
     private final LinkedList<Component> lines;
 
-    SidebarScoreboard(Component title, LinkedList<Component> lines) {
+    SidebarScoreboard(Player player, Component title, LinkedList<Component> lines) {
+        super(player);
         this.title = title;
         this.lines = lines;
     }
