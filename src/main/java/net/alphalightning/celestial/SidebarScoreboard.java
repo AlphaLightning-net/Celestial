@@ -62,6 +62,7 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
     @Override
     public void updateLine(int line, Component text) {
+        updateLine(line, text, null);
     }
 
     @Override
@@ -74,14 +75,62 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
     @Override
     public void updateLines(Component... lines) {
+        updateLines(Arrays.asList(lines));
     }
 
     @Override
     public void updateLines(Collection<Component> lines) {
+        updateLines(lines, null);
     }
 
     @Override
-    public void updateLines(Collection<Component> lines, Collection<Component> scores) {
+    public synchronized void updateLines(Collection<Component> lines, Collection<Component> scores) {
+        if (lines == null) throw new IllegalArgumentException("lines cannot be null");
+        validateLine(lines.size(), false, true);
+
+        if (scores != null && scores.size() != lines.size()) {
+            throw new IllegalArgumentException("scores and lines must be the same size");
+        }
+
+        var oldLines = new ArrayList<>(this.lines);
+        this.lines.clear();
+        this.lines.addAll(lines);
+
+        var oldScores = new ArrayList<>(this.scores);
+        this.scores.clear();
+        this.scores.addAll(scores != null ? scores : Collections.nCopies(lines.size(), null));
+
+        var linesSize = this.lines.size();
+        try {
+            if (oldLines.size() != linesSize) {
+                var oldLinesCopy = new ArrayList<>(oldLines);
+
+                if (oldLines.size() > linesSize) {
+                    for (var i = oldLinesCopy.size(); i > linesSize; i--) {
+                        sendTeamPacket(name, i - 1, Lifecycle.Team.REMOVE);
+                        sendScorePacket(name, this.scores, i - 1, Lifecycle.Scoreboard.REMOVE);
+                        oldLines.removeFirst();
+                    }
+                } else {
+                    for (var i = oldLinesCopy.size(); i < linesSize; i++) {
+                        sendScorePacket(name, this.scores, i, Lifecycle.Scoreboard.CHANGE);
+                        sendTeamPacket(name, i, Lifecycle.Team.CREATE);
+                    }
+                }
+            }
+
+            for (var i = 0; i < linesSize; i++) {
+                if (!compareEquals(lineByScore(oldLines, i), lineByScore(this.scores, i))) {
+                    sendLineChange(i);
+                }
+                if (!compareEquals(lineByScore(oldScores, i), lineByScore(this.scores, i))) {
+                    sendScorePacket(name, this.scores, i, Lifecycle.Scoreboard.CHANGE);
+                }
+            }
+
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Unable to update lines", throwable);
+        }
     }
 
     @Override
@@ -132,5 +181,10 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         if (checkMax && line >= LEGACY_COLOR_CODES.length - 1) {
             throw new IllegalArgumentException("Line number is too high: " + line);
         }
+    }
+
+    private void sendLineChange(int score) throws Throwable {
+        var line = lineByScore(this.lines, score);
+        sendTeamPacket(name, score, Lifecycle.Team.UPDATE, line, null);
     }
 }
