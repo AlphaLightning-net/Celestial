@@ -1,6 +1,7 @@
 package net.alphalightning.celestial;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -20,6 +21,8 @@ public sealed interface ScoreboardBase extends Scoreboard permits SidebarScorebo
 
         @Override
         Builder appendLines(Collection<Component> lines);
+
+        @NotNull Builder player(Player player);
 
         @NotNull ScoreboardBase build();
     }

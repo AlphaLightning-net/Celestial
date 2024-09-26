@@ -1,6 +1,7 @@
 package net.alphalightning.celestial;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -10,6 +11,8 @@ final class BelowNameScoreboardBuilder implements ScoreboardBase.Builder {
 
     private final LinkedList<Component> lines = new LinkedList<>();
     private Component title;
+
+    private Player player;
 
     @Override
     public ScoreboardBase.Builder title(Component title) {
@@ -51,7 +54,14 @@ final class BelowNameScoreboardBuilder implements ScoreboardBase.Builder {
     }
 
     @Override
+    public ScoreboardBase.@NotNull Builder player(Player player) {
+        this.player = player;
+        return this;
+    }
+
+    @Override
     public @NotNull ScoreboardBase build() {
-        return new BelowNameScoreboard(title, lines);
+        if (player == null) throw new IllegalStateException("The player cannot be null");
+        return new BelowNameScoreboard(player, title, lines);
     }
 }
