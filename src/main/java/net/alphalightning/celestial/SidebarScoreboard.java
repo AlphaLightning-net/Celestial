@@ -9,11 +9,11 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase {
+final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase, ComponentComparable {
 
-    private final Component title;
     private final LinkedList<Component> lines;
     private final String name;
+    private Component title;
 
     SidebarScoreboard(Player player, Component title, LinkedList<Component> lines) {
         super(player);
@@ -48,6 +48,15 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
     @Override
     public void updateTitle(Component title) {
+        if (compareEquals(this.title, title)) return;
+
+        this.title = title;
+        try {
+            sendObjectivePacket(Lifecycle.Objective.UPDATE, name, title);
+
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Unable to update title", throwable);
+        }
     }
 
     @Override
