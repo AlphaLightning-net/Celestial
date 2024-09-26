@@ -121,7 +121,7 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
             }
 
             for (var i = 0; i < linesSize; i++) {
-                if (!ComponentUtil.compareEquals(lineByScore(oldLines, i), lineByScore(this.scores, i))) {
+                if (!ComponentUtil.compareEquals(lineByScore(oldLines, i), lineByScore(this.lines, i))) {
                     sendLineChange(i);
                 }
                 if (!ComponentUtil.compareEquals(lineByScore(oldScores, i), lineByScore(this.scores, i))) {
