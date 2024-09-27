@@ -22,7 +22,7 @@ public sealed interface ScoreboardBase extends Scoreboard permits SidebarScorebo
         @Override
         Builder appendLines(Collection<Component> lines);
 
-        @NotNull Builder player(Player player);
+        Builder player(Player player);
 
         @NotNull ScoreboardBase build();
     }

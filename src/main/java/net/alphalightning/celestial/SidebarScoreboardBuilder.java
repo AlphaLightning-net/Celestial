@@ -54,7 +54,7 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
     }
 
     @Override
-    public ScoreboardBase.@NotNull Builder player(Player player) {
+    public ScoreboardBase.Builder player(Player player) {
         this.player = player;
         return this;
     }
