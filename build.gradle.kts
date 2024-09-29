@@ -3,9 +3,9 @@ import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 
 plugins {
     id("java-library")
-    id("io.papermc.paperweight.userdev") version "1.7.2"
+    id("io.papermc.paperweight.userdev") version "1.7.3"
     id("xyz.jpenilla.run-paper") version "2.3.0"
-    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
+    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0"
 }
 
 group = "net.alphalightning"
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
 
     // Dependencies that are already provided by another source
     compileOnly("org.jetbrains:annotations:24.1.0")
