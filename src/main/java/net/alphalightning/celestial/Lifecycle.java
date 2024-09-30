@@ -7,6 +7,10 @@ package net.alphalightning.celestial;
  */
 public final class Lifecycle {
 
+    private Lifecycle() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     /**
      * Lifecycle of a scoreboard's objective
      *

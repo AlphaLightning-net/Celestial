@@ -10,6 +10,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
  */
 public final class ComponentUtil {
 
+    private ComponentUtil() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     /**
      * Compares two components for pure quality after they have been serialized by {@link MiniMessage}
      *
