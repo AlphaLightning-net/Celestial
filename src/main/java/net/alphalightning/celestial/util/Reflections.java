@@ -153,6 +153,13 @@ public final class Reflections {
      */
     @FunctionalInterface
     public interface PacketConstructor {
+
+        /**
+         * Calls the constructor
+         *
+         * @return The created packet
+         * @throws Throwable If something went wrong
+         */
         Object invoke() throws Throwable;
     }
 
