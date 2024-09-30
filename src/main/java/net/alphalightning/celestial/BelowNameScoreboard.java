@@ -1,20 +1,24 @@
 package net.alphalightning.celestial;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
-final class BelowNameScoreboard implements ScoreboardBase {
+final class BelowNameScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase {
 
     private final Component title;
     private final LinkedList<Component> lines;
+    private final LinkedList<Component> scores;
 
-    BelowNameScoreboard(Component title, LinkedList<Component> lines) {
+    public BelowNameScoreboard(Player player, Component title, LinkedList<Component> lines, LinkedList<Component> scores) {
+        super(player);
         this.title = title;
         this.lines = lines;
+        this.scores = scores;
     }
 
     @Override

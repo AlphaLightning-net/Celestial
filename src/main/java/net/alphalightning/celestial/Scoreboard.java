@@ -52,9 +52,9 @@ public interface Scoreboard {
     interface Builder<T> {
         T title(Component title);
 
-        T appendLine(Component line);
-
         T appendEmptyLine();
+
+        T appendLine(Component line);
 
         T appendLines(Collection<Component> lines);
     }

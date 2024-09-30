@@ -4,7 +4,7 @@ import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 plugins {
     id("java-library")
     id("io.papermc.paperweight.userdev") version "1.7.3"
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
     id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0"
 }
 
@@ -26,6 +26,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
 
     // Dependencies required for testing
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.21:3.129.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -47,6 +48,8 @@ tasks {
         testLogging {
             events("passed", "skipped", "failed")
         }
+
+        exclude("Scoreboard***")
     }
 
     compileTestJava {
@@ -61,10 +64,14 @@ tasks {
     javadoc {
         options.encoding = Charsets.UTF_8.name()
     }
+
+    runServer {
+        minecraftVersion("1.21.1")
+    }
 }
 
 bukkitPluginYaml {
-    main = "$group.${rootProject.name}.CelestialPlugin"
+    main = "$group.${rootProject.name}.plugin.CelestialPlugin"
     load = BukkitPluginYaml.PluginLoadOrder.STARTUP
     authors = listOf("Merry")
     apiVersion = "1.21"
