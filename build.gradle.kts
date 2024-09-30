@@ -51,9 +51,6 @@ publishing {
 
 tasks {
     java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(currentJavaVersion))
-        }
         withSourcesJar()
         withJavadocJar()
     }
