@@ -15,6 +15,11 @@ import java.util.stream.Stream;
 
 import static net.alphalightning.celestial.util.Reflections.*;
 
+/**
+ * Part of a scoreboard represents the reflective base of it
+ *
+ * @since 1.0.0
+ */
 public abstract class ReflectiveScoreboardBase {
 
     @SuppressWarnings("deprecation")
