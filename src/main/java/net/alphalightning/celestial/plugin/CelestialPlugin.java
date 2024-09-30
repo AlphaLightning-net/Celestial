@@ -23,16 +23,13 @@ public class CelestialPlugin extends JavaPlugin implements Listener {
         var scoreboard = Scoreboard.builder(DisplayType.SIDEBAR)
                 .player(event.getPlayer())
                 .title(miniMessage.deserialize("<green>Example title"))
-                .appendEmptyLine()
-                .appendLine(miniMessage.deserialize("<blue>Sehr lange Example line"))
-                .appendEmptyLine()
+                .appendEmptyLine()  // 0
+                .appendLine(miniMessage.deserialize("<blue>Sehr lange Example line")) // 1
+                .appendEmptyLine() // 2
+                .appendEmptyLine() // 3
                 .build();
 
         scoreboard.display();
-        Bukkit.getScheduler().runTaskLater(this, () -> scoreboard.updateLines(
-                Component.empty(),
-                miniMessage.deserialize("<gold>Sehr lange example line"),
-                Component.empty()
-        ), 60L);
+        Bukkit.getScheduler().runTaskLater(this, () -> scoreboard.removeLine(3), 60L);
     }
 }
