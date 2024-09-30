@@ -199,6 +199,6 @@ public interface Scoreboard {
         if (type == DisplayType.SIDEBAR) {
             return new SidebarScoreboardBuilder();
         }
-        return new BelowNameScoreboardBuilder();
+        throw new UnsupportedOperationException("The below name scoreboard is currently not supported");
     }
 }
