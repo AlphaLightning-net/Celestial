@@ -1,17 +1,39 @@
 package net.alphalightning.celestial;
 
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.alphalightning.celestial.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ScoreboardTest {
 
+    private ServerMock server;
+    private PlayerMock player;
+
+    @BeforeEach
+    public void setUp() {
+        server = MockBukkit.mock();
+        player = server.addPlayer();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        MockBukkit.unmock();
+        player = null;
+    }
+
     @Test
     void testScoreboardCreation() {
-        var scoreboard = Scoreboard.builder(DisplayType.SIDEBAR).build();
+        var scoreboard = Scoreboard.builder(DisplayType.SIDEBAR)
+                .player(player)
+                .build();
         assertInstanceOf(SidebarScoreboard.class, scoreboard);
 
         scoreboard = Scoreboard.builder(DisplayType.BELOW_NAME).build();
@@ -21,6 +43,7 @@ class ScoreboardTest {
     @Test
     void testTitle() {
         var scoreboard = Scoreboard.builder(DisplayType.SIDEBAR)
+                .player(player)
                 .title(MiniMessage.miniMessage().deserialize("<green>Example Title"))
                 .build();
 
@@ -30,6 +53,7 @@ class ScoreboardTest {
     @Test
     void testLines() {
         var scoreboard = Scoreboard.builder(DisplayType.SIDEBAR)
+                .player(player)
                 .appendEmptyLine()
                 .appendLine(MiniMessage.miniMessage().deserialize("<red>Example Line"))
                 .build();
