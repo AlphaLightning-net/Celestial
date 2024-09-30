@@ -2,7 +2,6 @@ package net.alphalightning.celestial.plugin;
 
 import net.alphalightning.celestial.DisplayType;
 import net.alphalightning.celestial.Scoreboard;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -24,13 +23,13 @@ public class CelestialPlugin extends JavaPlugin implements Listener {
                 .player(event.getPlayer())
                 .title(miniMessage.deserialize("<green>Example title"))
                 .appendEmptyLine()  // 0
-                .appendLine(miniMessage.deserialize("<blue>Sehr lange Example line")) // 1
+                .appendLine(miniMessage.deserialize("<blue>Sehr lange Example line"), miniMessage.deserialize("<dark_red>✘")) // 1
                 .appendEmptyLine() // 2
                 .appendLine(miniMessage.deserialize("<red>Das ändert sich gleich"))// 3
                 .appendEmptyLine() // 4
                 .build();
 
         scoreboard.display();
-        Bukkit.getScheduler().runTaskLater(this, () -> scoreboard.updateLine(3, miniMessage.deserialize("<gold>Wurde geändert")), 60L);
+        Bukkit.getScheduler().runTaskLater(this, () -> scoreboard.removeScore(1), 60L);
     }
 }
