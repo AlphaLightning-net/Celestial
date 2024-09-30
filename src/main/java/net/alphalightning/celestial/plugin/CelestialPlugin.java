@@ -26,10 +26,11 @@ public class CelestialPlugin extends JavaPlugin implements Listener {
                 .appendEmptyLine()  // 0
                 .appendLine(miniMessage.deserialize("<blue>Sehr lange Example line")) // 1
                 .appendEmptyLine() // 2
-                .appendEmptyLine() // 3
+                .appendLine(miniMessage.deserialize("<red>Das ändert sich gleich"))// 3
+                .appendEmptyLine() // 4
                 .build();
 
         scoreboard.display();
-        Bukkit.getScheduler().runTaskLater(this, () -> scoreboard.removeLine(3), 60L);
+        Bukkit.getScheduler().runTaskLater(this, () -> scoreboard.updateLine(3, miniMessage.deserialize("<gold>Wurde geändert")), 60L);
     }
 }
