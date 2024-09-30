@@ -3,6 +3,7 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 plugins {
     id("java-library")
     id("io.papermc.paperweight.userdev") version "1.7.3"
+    id("maven-publish")
 }
 
 group = "net.alphalightning"
@@ -25,6 +26,23 @@ dependencies {
 
 // Since we don't care about supporting older versions and spigot, we don't have to reobfuscate our code
 paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODUCTION
+
+publishing {
+    repositories {
+        maven("https://maven.pkg.github.com/AlphaLightning-net/Celestial") {
+            credentials {
+                username = project.findProperty("user") as String? ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("token") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        create("Celestial", MavenPublication::class.java) {
+            from(components["java"])
+        }
+    }
+}
 
 tasks {
     java {
