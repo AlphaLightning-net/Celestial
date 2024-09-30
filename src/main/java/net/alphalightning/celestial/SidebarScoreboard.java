@@ -72,7 +72,16 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
     }
 
     @Override
-    public void removeLine(int line) {
+    public synchronized void removeLine(int line) {
+        validateLine(line, false, false);
+        if (line > lines.size()) return;
+
+        var newLines = new ArrayList<>(lines);
+        var newScores = new ArrayList<>(scores);
+        newLines.remove(line);
+        newScores.remove(line);
+
+        updateLines(newLines, newScores);
     }
 
     @Override
