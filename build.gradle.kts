@@ -59,6 +59,26 @@ tasks {
     }
 
     javadoc {
-        options.encoding = Charsets.UTF_8.name()
+        options {
+            encoding = Charsets.UTF_8.name()
+            memberLevel = JavadocMemberLevel.PUBLIC
+        }
     }
+
+    register<Javadoc>("alljavadoc") {
+        applyJavaDocsOptions(options)
+
+        setDestinationDir(file("${layout.buildDirectory.get()}/docs/javadoc"))
+        val projects = project.rootProject.allprojects.filter { p -> !p.name.contains("example") }
+        setSource(projects.map { p -> p.sourceSets.main.get().allJava.filter { p -> p.name != "module-info.java" } })
+        classpath = files(projects.map { p -> p.sourceSets.main.get().compileClasspath })
+    }
+}
+
+fun applyJavaDocsOptions(options: MinimalJavadocOptions) {
+    val javaDocOptions = options as StandardJavadocDocletOptions
+    javaDocOptions.links(
+        "https://javadoc.io/doc/org.jetbrains/annotations/latest/",
+        "https://docs.oracle.com/en/java/javase/${java.toolchain.languageVersion.get().asInt()}/docs/api/"
+    )
 }
