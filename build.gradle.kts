@@ -4,7 +4,7 @@ import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 plugins {
     id("java-library")
     id("io.papermc.paperweight.userdev") version "1.7.3"
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
     id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0"
 }
 
@@ -60,6 +60,10 @@ tasks {
 
     javadoc {
         options.encoding = Charsets.UTF_8.name()
+    }
+
+    runServer {
+        minecraftVersion("1.21.1")
     }
 }
 
