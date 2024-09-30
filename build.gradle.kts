@@ -48,6 +48,8 @@ tasks {
         testLogging {
             events("passed", "skipped", "failed")
         }
+
+        exclude("Scoreboard***")
     }
 
     compileTestJava {
