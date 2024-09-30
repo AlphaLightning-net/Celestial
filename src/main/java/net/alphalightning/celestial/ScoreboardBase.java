@@ -72,7 +72,7 @@ public sealed interface ScoreboardBase extends Scoreboard permits SidebarScorebo
          * Instantiates a new scoreboard
          *
          * @return The scoreboard
-         * @throws IllegalStateException If the player is null
+         * @throws IllegalStateException If the player or title is null
          */
         @NotNull ScoreboardBase build();
     }
