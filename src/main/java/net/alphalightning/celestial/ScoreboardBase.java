@@ -13,13 +13,13 @@ public sealed interface ScoreboardBase extends Scoreboard permits SidebarScorebo
         Builder title(Component title);
 
         @Override
-        Builder appendLine(Component line);
+        Builder appendLine(Component line, Component scoreText);
 
         @Override
         Builder appendEmptyLine();
 
         @Override
-        Builder appendLines(Collection<Component> lines);
+        Builder appendLines(Collection<Component> lines, Collection<Component> scoreTexts);
 
         @NotNull ScoreboardBase build();
     }

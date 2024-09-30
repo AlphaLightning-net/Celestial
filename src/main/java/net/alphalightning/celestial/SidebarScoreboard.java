@@ -11,10 +11,12 @@ final class SidebarScoreboard implements ScoreboardBase {
 
     private final Component title;
     private final LinkedList<Component> lines;
+    private final LinkedList<Component> scores;
 
-    SidebarScoreboard(Component title, LinkedList<Component> lines) {
+    SidebarScoreboard(Component title, LinkedList<Component> lines, LinkedList<Component> scores) {
         this.title = title;
         this.lines = lines;
+        this.scores = scores;
     }
 
     @Override

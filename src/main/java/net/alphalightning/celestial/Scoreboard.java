@@ -52,11 +52,15 @@ public interface Scoreboard {
     interface Builder<T> {
         T title(Component title);
 
-        T appendLine(Component line);
+        T appendLine(Component text);
+
+        T appendLine(Component line, Component scoreText);
 
         T appendEmptyLine();
 
         T appendLines(Collection<Component> lines);
+
+        T appendLines(Collection<Component> lines, Collection<Component> scoreTexts);
     }
 
     static ScoreboardBase.Builder builder(DisplayType type) {

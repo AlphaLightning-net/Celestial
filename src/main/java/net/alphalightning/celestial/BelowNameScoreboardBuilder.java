@@ -9,6 +9,7 @@ import java.util.LinkedList;
 final class BelowNameScoreboardBuilder implements ScoreboardBase.Builder {
 
     private final LinkedList<Component> lines = new LinkedList<>();
+    private final LinkedList<Component> scores = new LinkedList<>();
     private Component title;
 
     @Override
@@ -25,18 +26,36 @@ final class BelowNameScoreboardBuilder implements ScoreboardBase.Builder {
     }
 
     @Override
-    public ScoreboardBase.Builder appendLine(Component line) {
+    public ScoreboardBase.Builder appendLine(Component line, Component scoreText) {
         if (line == null) {
             throw new IllegalArgumentException("The line cannot be null");
         }
 
         lines.add(line);
+        scores.add(scoreText);
+        return this;
+    }
+
+    @Override
+    public ScoreboardBase.Builder appendLine(Component line) {
+        appendLine(line, null);
         return this;
     }
 
     @Override
     public ScoreboardBase.Builder appendEmptyLine() {
         lines.add(Component.empty());
+        return this;
+    }
+
+    @Override
+    public ScoreboardBase.Builder appendLines(Collection<Component> lines, Collection<Component> scoreTexts) {
+        if (lines.contains(null)) {
+            throw new IllegalArgumentException("A line cannot be null");
+        }
+
+        this.lines.addAll(lines);
+        this.scores.addAll(scoreTexts);
         return this;
     }
 
@@ -52,6 +71,6 @@ final class BelowNameScoreboardBuilder implements ScoreboardBase.Builder {
 
     @Override
     public @NotNull ScoreboardBase build() {
-        return new BelowNameScoreboard(title, lines);
+        return new BelowNameScoreboard(title, lines, scores);
     }
 }
