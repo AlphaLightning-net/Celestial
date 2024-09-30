@@ -180,19 +180,48 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
     }
 
     @Override
-    public void updateScore(int line, Component text) {
+    public synchronized void updateScore(int line, Component text) {
+        validateLine(line, true, false);
+
+        scores.set(line, text);
+        try {
+            sendScorePacket(name, scores, scoreByLine(line), Lifecycle.Scoreboard.CHANGE);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Unable to update score", throwable);
+        }
     }
 
     @Override
     public void removeScore(int line) {
+        updateScore(line, null);
     }
 
     @Override
     public void updateScores(Component... texts) {
+        updateScores(Arrays.asList(texts));
     }
 
     @Override
     public synchronized void updateScores(Collection<Component> texts) {
+        if (texts == null) {
+            throw new IllegalArgumentException("Scores cannot be null");
+        }
+        if (scores.size() != lines.size()) {
+            throw new IllegalArgumentException("Scores and lines must be the same size");
+        }
+
+        var newScores = new ArrayList<>(texts);
+        for (var i = 0; i < scores.size(); i++) {
+            if (Objects.equals(scores.get(i), newScores.get(i))) continue;
+
+            scores.set(i, newScores.get(i));
+
+            try {
+                sendScorePacket(name, scores, i, Lifecycle.Scoreboard.CHANGE);
+            } catch (Throwable throwable) {
+                throw new RuntimeException("Unable to update scores", throwable);
+            }
+        }
     }
 
     @Override
