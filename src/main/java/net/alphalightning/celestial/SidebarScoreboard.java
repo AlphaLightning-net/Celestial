@@ -69,6 +69,38 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
     @Override
     public void updateLine(int line, Component text, Component scoreText) {
+        validateLine(line, false, false);
+
+        try {
+            if (line < lines.size()) {
+                lines.set(line, text);
+                if (!scores.isEmpty()) scores.set(line, scoreText);
+
+                var score = scoreByLine(line);
+                sendLineChange(score);
+                sendScorePacket(name, scores, score, Lifecycle.Scoreboard.CHANGE);
+
+                return;
+            }
+
+            var newLines = new ArrayList<>(lines);
+            var newScores = new ArrayList<>(scores);
+
+            if (line > lines.size()) {
+                for (var i = lines.size(); i < line; i++) {
+                    newLines.add(Component.empty());
+                    newScores.add(null);
+                }
+            }
+
+            newLines.add(text);
+            newScores.add(scoreText);
+
+            updateLines(newLines, newScores);
+
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Unable to update line", throwable);
+        }
     }
 
     @Override
@@ -78,7 +110,7 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
 
         var newLines = new ArrayList<>(lines);
         var newScores = new ArrayList<>(scores);
-        if (!scores.isEmpty()){
+        if (!scores.isEmpty()) {
             newScores.remove(line);
         }
         newLines.remove(line);
@@ -207,6 +239,10 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
             sendTeamPacket(name, i, Lifecycle.Team.CREATE);
             sendLineChange(i);
         }
+    }
+
+    private int scoreByLine(int line) {
+        return lines.size() - line - 1;
     }
 
 }
