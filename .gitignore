@@ -5,6 +5,7 @@ build/
 !**/src/test/**/build/
 run/
 logs/
+gradle.properties
 
 ### IntelliJ IDEA ###
 .idea
