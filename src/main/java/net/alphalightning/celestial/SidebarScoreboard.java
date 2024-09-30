@@ -16,12 +16,14 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
     private final LinkedList<Component> lines;
     private final String name;
     private Component title;
+    private boolean firstDisplay;
 
     SidebarScoreboard(Player player, Component title, LinkedList<Component> lines) {
         super(player);
         this.title = title;
         this.lines = lines;
         this.name = "celestial-" + Integer.toHexString(ThreadLocalRandom.current().nextInt());
+        this.firstDisplay = true;
     }
 
     @Override
@@ -29,6 +31,7 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         try {
             sendObjectivePacket(Lifecycle.Objective.CREATE, name, title);
             sendDisplayObjectivePacket(name);
+            updateLines(lines);
 
         } catch (Throwable throwable) {
             throw new RuntimeException("Unable to create scoreboard", throwable);
@@ -94,11 +97,11 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
 
         var oldLines = new ArrayList<>(this.lines);
-        this.lines.clear();
+        if (!firstDisplay) this.lines.clear();
         this.lines.addAll(lines);
 
         var oldScores = new ArrayList<>(this.scores);
-        this.scores.clear();
+        if (!firstDisplay) this.scores.clear();
         this.scores.addAll(scores != null ? scores : Collections.nCopies(lines.size(), null));
 
         var linesSize = this.lines.size();
@@ -128,6 +131,8 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
                     sendScorePacket(name, this.scores, i, Lifecycle.Scoreboard.CHANGE);
                 }
             }
+
+            if (firstDisplay) firstDisplay = false;
 
         } catch (Throwable throwable) {
             throw new RuntimeException("Unable to update lines", throwable);
