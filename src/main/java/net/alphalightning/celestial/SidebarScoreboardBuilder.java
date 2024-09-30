@@ -7,6 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * Represents a concrete implementation of a {@link ScoreboardBase.Builder}
+ *
+ * @since 1.0.0
+ */
 final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
 
     private final LinkedList<Component> lines = new LinkedList<>();
@@ -15,6 +20,9 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
 
     private Player player;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScoreboardBase.Builder title(Component title) {
         if (title == null) {
@@ -28,18 +36,27 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScoreboardBase.Builder appendEmptyLine() {
         appendLine(Component.empty());
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScoreboardBase.Builder appendLine(Component line) {
         appendLine(line, null);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScoreboardBase.Builder appendLine(Component text, Component scoreText) {
         if (text == null) {
@@ -51,12 +68,18 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScoreboardBase.Builder appendLines(Collection<Component> lines) {
         appendLines(lines, null);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScoreboardBase.Builder appendLines(Collection<Component> lines, Collection<Component> scores) {
         if (lines.contains(null)) {
@@ -75,12 +98,18 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScoreboardBase.Builder player(Player player) {
         this.player = player;
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @NotNull ScoreboardBase build() {
         if (player == null) throw new IllegalStateException("The player cannot be null");

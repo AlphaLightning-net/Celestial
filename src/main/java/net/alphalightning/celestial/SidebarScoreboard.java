@@ -10,6 +10,12 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Represents a concrete implementation of a {@link ScoreboardBase}
+ *
+ * @see ReflectiveScoreboardBase
+ * @since 1.0.0
+ */
 final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase {
 
     private final LinkedList<Component> scores;
@@ -17,6 +23,14 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
     private final String name;
     private Component title;
 
+    /**
+     * Creates a new scoreboard from the builder and defines a unique name
+     *
+     * @param player The player
+     * @param title  The title
+     * @param lines  The lines
+     * @param scores The scores
+     */
     SidebarScoreboard(Player player, Component title, LinkedList<Component> lines, LinkedList<Component> scores) {
         super(player);
         this.title = title;
@@ -25,6 +39,9 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         this.name = "celestial-" + Integer.toHexString(ThreadLocalRandom.current().nextInt());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void display() {
         try {
@@ -37,6 +54,9 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void destroy() {
         try {
@@ -50,6 +70,9 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateTitle(Component title) {
         if (ComponentUtil.compareEquals(this.title, title)) return;
@@ -63,11 +86,17 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateLine(int line, Component text) {
         updateLine(line, text, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateLine(int line, Component text, Component scoreText) {
         validateLine(line, false, false);
@@ -104,6 +133,9 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void removeLine(int line) {
         validateLine(line, false, false);
@@ -119,16 +151,25 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         updateLines(newLines, scores.isEmpty() ? null : newScores);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateLines(Component... lines) {
         updateLines(Arrays.asList(lines));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateLines(Collection<Component> lines) {
         updateLines(lines, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void updateLines(Collection<Component> lines, Collection<Component> scores) {
         if (lines == null) throw new IllegalArgumentException("lines cannot be null");
@@ -179,6 +220,9 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void updateScore(int line, Component text) {
         validateLine(line, true, false);
@@ -191,16 +235,25 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeScore(int line) {
         updateScore(line, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateScores(Component... texts) {
         updateScores(Arrays.asList(texts));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void updateScores(Collection<Component> texts) {
         if (texts == null) {
@@ -224,22 +277,34 @@ final class SidebarScoreboard extends ReflectiveScoreboardBase implements Scoreb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @NotNull Component title() {
         return title;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @UnmodifiableView @NotNull List<Component> lines() {
         return Collections.unmodifiableList(lines);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @Nullable Component line(int line) {
         validateLine(line, true, false);
         return lines.get(line);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @NotNull Optional<Component> score(int line) {
         validateLine(line, true, false);
