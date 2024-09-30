@@ -12,11 +12,13 @@ final class BelowNameScoreboard extends ReflectiveScoreboardBase implements Scor
 
     private final Component title;
     private final LinkedList<Component> lines;
+    private final LinkedList<Component> scores;
 
-    public BelowNameScoreboard(Player player, Component title, LinkedList<Component> lines) {
+    public BelowNameScoreboard(Player player, Component title, LinkedList<Component> lines, LinkedList<Component> scores) {
         super(player);
         this.title = title;
         this.lines = lines;
+        this.scores = scores;
     }
 
     @Override
