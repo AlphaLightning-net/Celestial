@@ -12,15 +12,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 final class SidebarScoreboard extends ReflectiveScoreboardBase implements ScoreboardBase {
 
-    private final LinkedList<Component> scores = new LinkedList<>();
+    private final LinkedList<Component> scores;
     private final LinkedList<Component> lines;
     private final String name;
     private Component title;
 
-    SidebarScoreboard(Player player, Component title, LinkedList<Component> lines) {
+    SidebarScoreboard(Player player, Component title, LinkedList<Component> lines, LinkedList<Component> scores) {
         super(player);
         this.title = title;
         this.lines = lines;
+        this.scores = scores;
         this.name = "celestial-" + Integer.toHexString(ThreadLocalRandom.current().nextInt());
     }
 

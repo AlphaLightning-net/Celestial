@@ -10,6 +10,7 @@ import java.util.LinkedList;
 final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
 
     private final LinkedList<Component> lines = new LinkedList<>();
+    private final LinkedList<Component> scores = new LinkedList<>();
     private Component title;
 
     private Player player;
@@ -28,28 +29,49 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
     }
 
     @Override
-    public ScoreboardBase.Builder appendLine(Component line) {
-        if (line == null) {
-            throw new IllegalArgumentException("The line cannot be null");
-        }
-
-        lines.add(line);
+    public ScoreboardBase.Builder appendEmptyLine() {
+        appendLine(Component.empty());
         return this;
     }
 
     @Override
-    public ScoreboardBase.Builder appendEmptyLine() {
-        lines.add(Component.empty());
+    public ScoreboardBase.Builder appendLine(Component line) {
+        appendLine(line, null);
+        return this;
+    }
+
+    @Override
+    public ScoreboardBase.Builder appendLine(Component text, Component scoreText) {
+        if (text == null) {
+            throw new IllegalArgumentException("The line cannot be null");
+        }
+
+        lines.add(text);
+        scores.add(scoreText);
         return this;
     }
 
     @Override
     public ScoreboardBase.Builder appendLines(Collection<Component> lines) {
+        appendLines(lines, null);
+        return this;
+    }
+
+    @Override
+    public ScoreboardBase.Builder appendLines(Collection<Component> lines, Collection<Component> scores) {
         if (lines.contains(null)) {
             throw new IllegalArgumentException("A line cannot be null");
         }
 
         this.lines.addAll(lines);
+        if (scores == null || scores.isEmpty()) {
+            for (var i = 0; i < lines.size(); i++) {
+                this.scores.add(null);
+            }
+        } else {
+            this.scores.addAll(scores);
+        }
+
         return this;
     }
 
@@ -62,6 +84,6 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
     @Override
     public @NotNull ScoreboardBase build() {
         if (player == null) throw new IllegalStateException("The player cannot be null");
-        return new SidebarScoreboard(player, title, lines);
+        return new SidebarScoreboard(player, title, lines, scores);
     }
 }
