@@ -113,6 +113,8 @@ final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
     @Override
     public @NotNull ScoreboardBase build() {
         if (player == null) throw new IllegalStateException("The player cannot be null");
+        if (title == null) throw new IllegalStateException("The title cannot be null");
+
         return new SidebarScoreboard(player, title, lines, scores);
     }
 }

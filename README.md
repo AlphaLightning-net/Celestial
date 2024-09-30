@@ -54,7 +54,7 @@ You can create a scoreboard like in the example below (written in Kotlin; when u
 ```kotlin
 val scoreboard = Scoreboard.builder(DisplayType.SIDEBAR) // Creates a builder for a SidebarScoreboard
     .player(player) // Select the target player to which the scoreboard will be displayed
-    .title(miniMessage.deserialize("<green>Example Title")) // Define the title
+    .title(miniMessage.deserialize("<green>Example Title")) // Define the title (needed)
     .appendEmptyLine() // Adds an empty line
     .appendLine(miniMessage.deserialize("<blue>Example Text")) // Adds a line without a custom score
     .appendEmptyLine()
