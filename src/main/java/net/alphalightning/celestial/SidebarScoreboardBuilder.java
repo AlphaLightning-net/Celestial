@@ -7,6 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * Represents a concrete implementation of a {@link ScoreboardBase.Builder}
+ *
+ * @since 1.0.0
+ */
 final class SidebarScoreboardBuilder implements ScoreboardBase.Builder {
 
     private final LinkedList<Component> lines = new LinkedList<>();
