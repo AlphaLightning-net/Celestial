@@ -64,7 +64,7 @@ public sealed interface ScoreboardBase extends Scoreboard permits SidebarScorebo
          * Specifies the player to whom the scoreboard will be displayed. Necessary for the builder to work
          *
          * @param player The player
-         * @return
+         * @return The builder
          */
         Builder player(Player player);
 
