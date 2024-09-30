@@ -29,7 +29,9 @@ paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODU
 
 publishing {
     repositories {
-        maven("https://maven.pkg.github.com/AlphaLightning-net/Celestial") {
+        maven {
+            url = uri("https://maven.pkg.github.com/AlphaLightning-net/Celestial")
+            name = "GitHubPackages"
             credentials {
                 username = project.findProperty("user") as String? ?: System.getenv("GITHUB_USERNAME")
                 password = project.findProperty("token") as String? ?: System.getenv("GITHUB_TOKEN")
@@ -38,8 +40,11 @@ publishing {
     }
 
     publications {
-        create("Celestial", MavenPublication::class.java) {
+        register<MavenPublication>("gprRelease") {
             from(components["java"])
+            groupId = project.group as String
+            artifactId = project.name
+            version = project.version as String
         }
     }
 }
@@ -70,7 +75,7 @@ tasks {
 
         setDestinationDir(file("${layout.buildDirectory.get()}/docs/javadoc"))
         val projects = project.rootProject.allprojects.filter { p -> !p.name.contains("example") }
-        setSource(projects.map { p -> p.sourceSets.main.get().allJava.filter { p -> p.name != "module-info.java" } })
+        setSource(projects.map { p -> p.sourceSets.main.get().allJava.filter { project -> project.name != "module-info.java" } })
         classpath = files(projects.map { p -> p.sourceSets.main.get().compileClasspath })
     }
 }
