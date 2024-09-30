@@ -16,7 +16,6 @@ val currentJavaVersion = 22
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
@@ -27,7 +26,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
 
     // Dependencies required for testing
-    testImplementation("com.github.MockBukkit:MockBukkit:v1.21-SNAPSHOT")
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.21:3.129.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
