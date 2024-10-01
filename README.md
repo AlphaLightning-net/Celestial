@@ -30,12 +30,11 @@ repositories {
 }
 ```
 
-2) Add the dependency to your _dependencies_ section in your _build.gradle.kts_. <br>
-   Note: The current version can be obtained from above's release badge.
+2) Add the dependency to your _dependencies_ section in your _build.gradle.kts_:
 
 ```kotlin
 dependencies {
-    implementation("net.alphalightning:celestial:[version]")
+    implementation("net.alphalightning:celestial:1.0.0")
 }
 ```
 
@@ -163,5 +162,4 @@ They're working the exact way the methods without scores do. <br>
 ___
 
 # Issue tracking
-
 If you have found an issue/bug or want to request a new feature, please create a new issue ticket [here](https://github.com/AlphaLightning-net/Celestial/issues/new).

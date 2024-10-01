@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "net.alphalightning"
-version = "1.0.4"
+version = "1.0.0"
 description = "A fast and easy to use scoreboard library"
 
 val currentJavaVersion = 22
