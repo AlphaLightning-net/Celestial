@@ -1,4 +1,4 @@
-package net.alphalightning.celestial;
+package org.breezora.celestial;
 
 /**
  * Defines all supported types of scoreboards

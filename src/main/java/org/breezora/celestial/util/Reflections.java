@@ -1,4 +1,4 @@
-package net.alphalightning.celestial.util;
+package org.breezora.celestial.util;
 
 import org.jetbrains.annotations.NotNull;
 
