@@ -1,4 +1,4 @@
-package net.alphalightning.celestial;
+package org.breezora.celestial;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;

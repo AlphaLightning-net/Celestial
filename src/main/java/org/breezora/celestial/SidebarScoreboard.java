@@ -1,6 +1,6 @@
-package net.alphalightning.celestial;
+package org.breezora.celestial;
 
-import net.alphalightning.celestial.util.ComponentUtil;
+import org.breezora.celestial.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

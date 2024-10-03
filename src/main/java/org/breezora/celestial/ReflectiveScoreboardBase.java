@@ -1,6 +1,6 @@
-package net.alphalightning.celestial;
+package org.breezora.celestial;
 
-import net.alphalightning.celestial.util.Reflections;
+import org.breezora.celestial.util.Reflections;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,7 +13,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static net.alphalightning.celestial.util.Reflections.*;
+import static org.breezora.celestial.util.Reflections.*;
 
 /**
  * Part of a scoreboard represents the reflective base of it

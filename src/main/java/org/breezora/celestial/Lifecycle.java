@@ -1,4 +1,4 @@
-package net.alphalightning.celestial;
+package org.breezora.celestial;
 
 /**
  * A class that contains lifecycles of various different objects
