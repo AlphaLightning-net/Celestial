@@ -61,7 +61,7 @@ publishing {
             name = "breezoraRepositoryIntern"
             credentials {
                 username = System.getenv("MAVEN_NAME") ?: project.findProperty("breezoraRepositoryInternUsername") as String?
-                password = System.getenv("MAVEN_TOKEN") ?: project.findProperty("breezoraRepositoryInternPassword") as String?
+                password = System.getenv("MAVEN_SECRET") ?: project.findProperty("breezoraRepositoryInternPassword") as String?
             }
         }
     }
