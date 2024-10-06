@@ -11,14 +11,28 @@
 
 ___
 
+# Requirements
+- Java 22
+
 # Dependency
 
 1) Add the repository to your _build.gradle.kts_:
 
 ```kotlin
 repositories {
-    maven("https://repo.breezora.net/releases")
+    maven("https://repo.breezora.net/intern") {
+        name = "breezoraRepositoryIntern"
+        credentials {
+            username = project.findProperty("breezoraRepositoryInternUsername") as String?
+            password = project.findProperty("breezoraRepositoryInternPassword") as String?
+        }
+    }
 }
+```
+You should create a _gradle.properties_ file in your _./gradle_ folder. Add the following to it:
+```
+breezoraRepositoryInternUsername=<Your name>
+breezoraRepositoryInternPassword=<Your token>
 ```
 
 2) Add the dependency to your _dependencies_ section in your _build.gradle.kts_. <br>
