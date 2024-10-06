@@ -55,6 +55,26 @@ tasks {
     }
 }
 
+publishing {
+    repositories {
+        maven("https://repo.breezora.net/intern") {
+            name = "breezoraRepositoryIntern"
+            credentials(PasswordCredentials::class)
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = project.group as String
+            version = project.version as String
+            artifactId = project.name
+            from(components["java"])
+        }
+    }
+}
+
 fun applyJavaDocsOptions(options: MinimalJavadocOptions) {
     val javaDocOptions = options as StandardJavadocDocletOptions
     javaDocOptions.links(
