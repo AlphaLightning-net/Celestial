@@ -9,9 +9,6 @@
 </div>
 <br>
 
-![Build](https://img.shields.io/github/actions/workflow/status/AlphaLightning-net/Celestial/gradle.yml?style=for-the-badge)
-![Release](https://img.shields.io/github/v/release/AlphaLightning-net/Celestial?display_name=release&style=for-the-badge)
-
 ___
 
 # Dependency
@@ -20,13 +17,7 @@ ___
 
 ```kotlin
 repositories {
-    maven {
-        url = uri("maven.pkg.github.com/AlphaLightning-net/Celestial")
-        credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
-        }
-    }
+    maven("https://repo.breezora.net/releases")
 }
 ```
 
@@ -35,7 +26,7 @@ repositories {
 
 ```kotlin
 dependencies {
-    implementation("net.alphalightning:celestial:[version]")
+    implementation("net.breezora:celestial:[version]")
 }
 ```
 
