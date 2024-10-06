@@ -2,6 +2,7 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 
 plugins {
     id("java-library")
+    id("maven-publish")
     id("io.papermc.paperweight.userdev") version "1.7.3"
 }
 
