@@ -59,9 +59,9 @@ publishing {
     repositories {
         maven("https://repo.breezora.net/intern") {
             name = "breezoraRepositoryIntern"
-            credentials(PasswordCredentials::class)
-            authentication {
-                create<BasicAuthentication>("basic")
+            credentials {
+                username = System.getenv("MAVEN_NAME") ?: project.findProperty("breezoraRepositoryInternUsername") as String?
+                password = System.getenv("MAVEN_TOKEN") ?: project.findProperty("breezoraRepositoryInternPassword") as String?
             }
         }
     }
