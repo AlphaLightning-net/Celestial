@@ -19,7 +19,7 @@ jobs:
         with:
           servers: |
             [{
-              "id": "reposilite-repository",
+              "id": "breezora-repository-releases",
               "username": "${{ secrets.MAVEN_NAME }}",
               "password": "${{ secrets.MAVEN_SECRET }}"
             }]
